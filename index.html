@@ -86,22 +86,126 @@
       <button>Trigger a Global Error</button>
     </section>
   </main>
-
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+                          
   <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "5201f983643d484fa4892e59ee1315b3"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+    TrackJS.track('Testing TrackJS!');
+
+    class ValidationError extends Error {
+      constructor(message) {
+        super(message); // (1)
+        this.name = "ValidationError"; // (2)
+      }
+    }
+    function test() {
+      throw new ValidationError("Whoops!");
+    }
+    try {
+      test();
+    } catch(err) {
+      alert(err.message); // Whoops!
+      alert(err.name); // ValidationError
+      alert(err.stack); // a list of nested calls with line numbers for each
+    }
+    
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
-      e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try{
+        e.preventDefault();
+        let output = document.querySelector('output');
+        let firstNum = document.querySelector('#first-num').value;
+        let secondNum = document.querySelector('#second-num').value;
+        let operator = document.querySelector('#operator').value;
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      }catch(err){
+        console.log("Error");
+        alert(err.name); // ReferenceError
+        alert(err.message); // lalala is not defined
+        alert(err.stack); // ReferenceError: lalala is not defined at (...call stack)
+        alert(err);
+        throw new CustomError("Input Error");
+      }finally{
+        console.log("finally done");
+      }
+
+
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    const logBtn=errorBtns[0];
+    logBtn.addEventListener('click',()=>{
+      console.log("Console Log Demo");
+    });
+    const errBtn=errorBtns[1];
+    errBtn.addEventListener('click',()=>{
+      console.error("Console Error Demo");
+    });
+    const countBtn=errorBtns[2];
+    countBtn.addEventListener('click',()=>{
+      console.count("Count Button:");
+    });
+    const warnBtn=errorBtns[3];
+    warnBtn.addEventListener('click',()=>{
+      console.warn("Console Warn Button");
+    });
+    const asrtBtn=errorBtns[4];
+    asrtBtn.addEventListener('click',()=>{
+      console.assert(1==5,"1 doesn't equal 4");
+    });
+
+    errorBtns[5].addEventListener("click", () => {
+      console.clear();
+    });
+
+    errorBtns[6].addEventListener("click", () => {
+      console.dir(document.head);
+    });
+
+   errorBtns[7].addEventListener("click", () => {
+      console.dirxml(document.head);
+    });
+
+    errorBtns[8].addEventListener("click", () => {
+      console.group("Console Group Start");
+    });
+
+    errorBtns[9].addEventListener("click", () => {
+      console.groupEnd("Console Group End");
+    });
+    errorBtns[10].addEventListener("click",()=>{
+      console.table(["apples", "oranges", "bananas"]);
+    })
+    errorBtns[11].addEventListener("click", () => {
+      console.time();
+    });
+
+    errorBtns[12].addEventListener("click", () => {
+      console.timeEnd();
+    });
+    function foo() {
+      function bar() {
+        console.trace();
+      }
+      bar();
+    }
+    errorBtns[13].addEventListener("click", () => {
+      foo();
+      
+    });
+
+
+    errorBtns[14].addEventListener("click", () => {
+      throw new Error("Global Error");
+    });
+
+    
   </script>
 </body>
 
